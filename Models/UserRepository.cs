@@ -13,7 +13,17 @@ namespace KloutAPI.Models
             _context = dbContext;
         }
 
-        public void EditUser(User user)
+        public User Get(string Id)
+        {
+            return _context.users.Find(Id);
+        }
+
+        public void Create(User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Edit(User user)
         {
             var this_user = _context.users.Find(user.user_id);
             this_user.full_name = user.full_name;
@@ -21,9 +31,9 @@ namespace KloutAPI.Models
             this_user.username = user.username;
         }
 
-        public User Get(string Id)
+        public void Delete(string user_id)
         {
-            return _context.users.Find(Id);
+            throw new NotImplementedException();
         }
 
         public void Follow(string follower_id, string following_id)
@@ -44,7 +54,7 @@ namespace KloutAPI.Models
             _context.SaveChanges();
         }
 
-        public List<string> GetFollowers(string user_id)
+        public List<string> Followers(string user_id)
         {
             var matchingRows = _context.follows.Where(p => p.following_id == user_id).ToList();
             var followers = new List<string>();
@@ -55,7 +65,7 @@ namespace KloutAPI.Models
             return followers;
         }
 
-        public List<string> GetFollowing(string user_id)
+        public List<string> Following(string user_id)
         {
             var matchingRows = _context.follows.Where(f => f.follower_id == user_id).ToList();
             var following = new List<string>();

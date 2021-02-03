@@ -5,9 +5,6 @@ namespace KloutAPI.Models
 {
     public interface IPostRepository
     {
-        IEnumerable<Post> ThisUserPosts(string user_id);
-
-        //Post functions
         Post Get(int post_id);
         Post Create(string user_id, Post post);
         Post Edit(string user_id, int post_id, string post_content);
@@ -17,5 +14,6 @@ namespace KloutAPI.Models
         void Like(int post_id, string user_id);
         void Dislike(int post_id, string user_id);
         IEnumerable<Post> Feed(string user_id);
+        IEnumerable<Post> ThisUserPosts(string user_id);
     }
 }

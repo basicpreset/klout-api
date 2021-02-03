@@ -87,5 +87,12 @@ namespace KloutAPI.Controllers
         {
             return _repository.Feed(user_id);
         }
+
+        // 9. ThisUserPosts
+        [HttpGet("{user_id}/all")]
+        public IEnumerable<Post> ThisUserPosts(string user_id)
+        {
+            return _repository.ThisUserPosts(user_id);
+        }
     }
 }
