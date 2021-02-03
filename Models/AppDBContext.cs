@@ -11,5 +11,14 @@ namespace KloutAPI.Models
 
         public DbSet<User> users { get; set; }
         public DbSet<Post> posts { get; set; }
+        public DbSet<Like> likes { get; set; }
+        public DbSet<Dislike> dislikes { get; set; }
+        public DbSet<Follow> follows { get; set; }
+        public DbSet<Repost> reposts { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+
+        }
     }
 }

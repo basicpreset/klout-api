@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using KloutAPI.Models;
 
 namespace KloutAPI.Models
 {
@@ -13,50 +15,157 @@ namespace KloutAPI.Models
             _context = context;
         }
 
-
-        public Post Get(int Id)
+        public Post Get(int post_id)
         {
-            return _context.posts.Find(Id);
+            return _context.posts.Find(post_id);
         }
 
-        public IEnumerable<Post> GetFeed(int[] following)
+        public Post Create(string user_id, Post post)
         {
-            var filtered = _context.posts.Where(p => following.Contains(p.user_id)).OrderBy(p => p.created_on);
-            return filtered;
+            _context.posts.Add(post);
+
+            var user = _context.users.Find(user_id);
+            user.post_count++;
+
+            _context.users.Update(user);
+
+            _context.SaveChanges();
+
+            return post;
         }
 
-        public IEnumerable<Post> GetUserPosts(int Id)
+        public Post Edit(string user_id, int post_id, string post_content)
         {
-            var filtered = _context.posts.Where(p => p.post_id == Id);
-            return filtered;
+            var edited_post = _context.posts.Find(post_id);
+            edited_post.post_content = post_content;
+
+            _context.posts.Update(edited_post);
+
+            _context.SaveChanges();
+
+            return _context.posts.Find(post_id);
         }
 
-        public void Like(int Id)
+        public void Repost(Post post, string user_id, int original_post_id)
         {
-            var post = _context.posts.Find(Id);
-            post.likes_count++;
+            /*var repost = new Repost
+            {
+                user_id = user_id,
+                post_id = post_id
+            };
+            _context.reposts.Add(repost);
+            _context.SaveChanges();*/
+            var new_post = post;
+            new_post.original_post_id = original_post_id;
+            _context.posts.Add(new_post);
             _context.SaveChanges();
         }
 
-        public void Dislike(int Id)
+        public void DeleteRepost(string user_id, int post_id)
         {
-            var post = _context.posts.Find(Id);
-            post.dislikes_count++;
+            var repost = new Repost
+            {
+                user_id = user_id,
+                post_id = post_id
+            };
+            _context.reposts.RemoveRange(repost);
             _context.SaveChanges();
         }
 
-        public void Remove(int Id)
+        public void Delete(string user_id, int post_id)
         {
-            var post = _context.posts.Find(Id);
+            var post = _context.posts.Find(post_id);
+            var likes = _context.likes.Where(l => l.post_id == post_id);
+            foreach (var like in likes)
+            {
+                _context.likes.Remove(like);
+            }
+            var dislikes = _context.dislikes.Where(d => d.post_id == post_id);
+            foreach (var dislike in dislikes)
+            {
+                _context.dislikes.Remove(dislike);
+            }
+
+            var user = _context.users.Find(user_id);
+            user.post_count--;
+
+            _context.users.Update(user);
+
             _context.posts.Remove(post);
             _context.SaveChanges();
         }
 
-        public void Edit(Post post)
+        public void Like(int post_id, string user_id)
         {
-            var editedPost = _context.posts.Find(post.post_id);
-            editedPost.post_content = post.post_content;
+            //IMPLEMENT: Counter
+            var post = _context.posts.Find(post_id);
+            foreach (var dislike in _context.dislikes.Where(d => d.post_id == post.post_id))
+            {
+                if (dislike.user_id == user_id)
+                {
+                    post.dislikes_count--;
+                    Dislike rdis = new Dislike
+                    {
+                        dislike_id = dislike.dislike_id,
+                        user_id = user_id,
+                        post_id = post.post_id
+                    };
+                    _context.dislikes.Remove(rdis);
+                }
+            }
+            _context.likes.Add(new Like(user_id: user_id, post_id: post_id));
+
+            post.likes_count++;
+            _context.posts.Update(post);
+
             _context.SaveChanges();
+        }
+
+        public void Dislike(int post_id, string user_id)
+        {
+            //IMPLEMENT: Counter
+            var post = _context.posts.Find(post_id);
+            foreach (var like in _context.likes.Where(d => d.post_id == post.post_id))
+            {
+                if (like.user_id == user_id)
+                {
+                    post.likes_count--;
+                    Like rlike = new Like
+                    {
+                        like_id = like.like_id,
+                        user_id = user_id,
+                        post_id = post.post_id
+                    };
+                    _context.likes.Remove(rlike);
+                }
+            }
+            _context.dislikes.Add(new Dislike(user_id: user_id, post_id: post_id));
+
+            post.dislikes_count++;
+            _context.posts.Update(post);
+
+            _context.SaveChanges();
+        }
+
+        public IEnumerable<Post> Feed(string user_id)
+        {
+            List<Follow> rows = _context.follows.ToList();
+            var matching = new List<string>();
+            foreach (var row in rows)
+            {
+                if (row.follower_id == user_id)
+                {
+                    matching.Add(row.following_id);
+                }
+            }
+            var feed = _context.posts.Where(p => matching.Contains(p.user_id)).OrderBy(p => p.created_on);
+            return feed;
+        }
+
+        public IEnumerable<Post> ThisUserPosts(string user_id)
+        {
+            var filtered = _context.posts.Where(p => p.user_id == user_id);
+            return filtered;
         }
     }
 }

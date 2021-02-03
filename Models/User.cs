@@ -1,12 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace KloutAPI.Models
 {
     public class User
     {
+        public User()
+        {
+
+        }
+
         [Key]
-        public int user_id { get; set; }
+        public string user_id { get; set; }
         public string username { get; set; }
         public string full_name { get; set; }
         public string userbio { get; set; }
@@ -16,5 +23,10 @@ namespace KloutAPI.Models
         public int post_count { get; set; }
         public int follower_count { get; set; }
         public int following_count { get; set; }
+        public string profile_img_url { get; set; }
+        public string profile_cover_url { get; set; }
+
+        [ForeignKey("user_id")]
+        public List<Post> posts { get; set; }
     }
 }

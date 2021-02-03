@@ -31,7 +31,9 @@ namespace KloutAPI
             services.AddControllers().AddNewtonsoftJson();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IPostRepository, PostRepository>();
-            services.AddDbContext<AppDBContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DBConnectionString")));
+            services.AddDbContextPool<AppDBContext>(options => options.UseNpgsql(
+                Configuration.GetConnectionString("DBConnectionString"))
+            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
