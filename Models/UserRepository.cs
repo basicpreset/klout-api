@@ -18,29 +18,36 @@ namespace KloutAPI.Models
             return _context.users.Find(Id);
         }
 
-        public void Create(User user)
+        public User Create(User user)
         {
-            throw new NotImplementedException();
+            _context.users.Add(user);
+            _context.SaveChanges();
+            return user;
         }
 
-        public void Edit(User user)
+        public User Edit(User user)
         {
             var this_user = _context.users.Find(user.user_id);
-            this_user.full_name = user.full_name;
-            this_user.email = user.email;
-            this_user.username = user.username;
+            this_user = user;
+            _context.users.Update(this_user);
+            _context.SaveChanges();
+            return this_user;
         }
 
         public void Delete(string user_id)
         {
-            throw new NotImplementedException();
+            var user = _context.users.Find(user_id);
+            _context.users.Remove(user);
+            _context.SaveChanges();
         }
 
         public void Follow(string follower_id, string following_id)
         {
-            Follow follow = new Follow();
-            follow.follower_id = follower_id;
-            follow.following_id = following_id;
+            Follow follow = new Follow
+            {
+                follower_id = follower_id,
+                following_id = following_id
+            };
             _context.follows.Add(follow);
             _context.SaveChanges();
         }

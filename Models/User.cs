@@ -7,11 +7,6 @@ namespace KloutAPI.Models
 {
     public class User
     {
-        public User()
-        {
-
-        }
-
         [Key]
         public string user_id { get; set; }
         public string username { get; set; }
@@ -26,7 +21,7 @@ namespace KloutAPI.Models
         public string profile_img_url { get; set; }
         public string profile_cover_url { get; set; }
 
-        [ForeignKey("user_id")]
-        public List<Post> posts { get; set; }
+        //[InverseProperty("User")]
+        //public virtual List<Post> posts { get; set; } = new List<Post>();
     }
 }

@@ -17,20 +17,18 @@ namespace KloutAPI.Models
 
         public Post Get(int post_id)
         {
-            return _context.posts.Find(post_id);
+            var post = _context.posts.Find(post_id);
+            return post;
         }
 
         public Post Create(string user_id, Post post)
         {
             _context.posts.Add(post);
-
             var user = _context.users.Find(user_id);
+            //user.posts.Add(post);
             user.post_count++;
-
             _context.users.Update(user);
-
             _context.SaveChanges();
-
             return post;
         }
 
@@ -113,7 +111,12 @@ namespace KloutAPI.Models
                     _context.dislikes.Remove(rdis);
                 }
             }
-            _context.likes.Add(new Like(user_id: user_id, post_id: post_id));
+            var like = new Like
+            {
+                user_id = user_id,
+                post_id = post_id
+            };
+            _context.likes.Add(like);
 
             post.likes_count++;
             _context.posts.Update(post);
@@ -139,7 +142,12 @@ namespace KloutAPI.Models
                     _context.likes.Remove(rlike);
                 }
             }
-            _context.dislikes.Add(new Dislike(user_id: user_id, post_id: post_id));
+            var dislike = new Dislike
+            {
+                user_id = user_id,
+                post_id = post_id
+            };
+            _context.dislikes.Add(dislike);
 
             post.dislikes_count++;
             _context.posts.Update(post);

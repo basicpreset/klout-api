@@ -7,8 +7,8 @@ namespace KloutAPI.Models
     {
         User Get(string user_id);
 
-        void Create(User user);
-        void Edit(User user);
+        User Create(User user);
+        User Edit(User user);
         void Delete(string user_id);
 
         void Follow(string follower_id, string following_id);
