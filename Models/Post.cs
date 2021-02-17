@@ -14,6 +14,7 @@ namespace KloutAPI.Models
 
         [Key]
         public int post_id { get; set; }
+        //[Key]
         public string user_id { get; set; }
         public string username { get; set; }
         public string user_img_url { get; set; }
@@ -25,7 +26,7 @@ namespace KloutAPI.Models
         public int comments_count { get; set; }
         public int original_post_id { get; set; }
 
-        //[ForeignKey("user_id")]
+        
         //public virtual User user { get; set; } = new User();
         //public virtual List<Dislike> dislikes { get; set;  } = new List<Dislike>();
         //public virtual List<Like> likes { get; set;  } = new List<Like>();

@@ -48,14 +48,6 @@ namespace KloutAPI.Controllers
             return Ok();
         }
 
-        // ?. Remove repost
-        /*[HttpGet("{user_id}/delete_repost/{post_id}")]
-        public ActionResult DeleteRepost(string user_id, int post_id)
-        {
-            _repository.DeleteRepost(user_id, post_id);
-            return Ok();
-        }*/
-
         // 5. Delete
         [HttpGet("{user_id}/delete/{post_id}")]
         public ActionResult Delete(string user_id, int post_id)
@@ -66,19 +58,19 @@ namespace KloutAPI.Controllers
 
         // 6. Like
         [HttpGet("{user_id}/like/{post_id}")]
-        public ActionResult Like(string user_id, int post_id)
+        public ActionResult<int> Like(string user_id, int post_id)
         {
-            _repository.Like(post_id, user_id);
-            return Ok();
+            var like_count = _repository.Like(post_id, user_id);
+            return like_count;
         }
 
         // 7. Dislike
         [HttpGet("{user_id}/dislike/{post_id}/")]
-        public ActionResult Dislike(string user_id, int post_id)
+        public ActionResult<int> Dislike(string user_id, int post_id)
         {
 
-            _repository.Dislike(post_id, user_id);
-            return Ok();
+            var dislike_count = _repository.Dislike(post_id, user_id);
+            return dislike_count;
         }
 
         // 8. Feed

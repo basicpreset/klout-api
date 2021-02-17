@@ -93,10 +93,13 @@ namespace KloutAPI.Models
             _context.SaveChanges();
         }
 
-        public void Like(int post_id, string user_id)
+        public int Like(int post_id, string user_id)
         {
             //IMPLEMENT: Counter
             var post = _context.posts.Find(post_id);
+
+            bool alreadyLiked = false;
+            
             foreach (var dislike in _context.dislikes.Where(d => d.post_id == post.post_id))
             {
                 if (dislike.user_id == user_id)
@@ -111,23 +114,40 @@ namespace KloutAPI.Models
                     _context.dislikes.Remove(rdis);
                 }
             }
-            var like = new Like
+            foreach (var like in _context.likes.Where(l => l.post_id == post_id))
             {
-                user_id = user_id,
-                post_id = post_id
-            };
-            _context.likes.Add(like);
-
-            post.likes_count++;
+                if(like.user_id == user_id)
+                {
+                    post.likes_count--;
+                    Like rlike = new Like {
+                        like_id = like.like_id,
+                        user_id = like.user_id,
+                        post_id = like.post_id
+                    };
+                    _context.Remove(rlike);
+                    alreadyLiked = true;
+                }
+            }
+            if(!alreadyLiked) {
+                var newLike = new Like
+                {
+                    user_id = user_id,
+                    post_id = post_id
+                };
+                _context.likes.Add(newLike);
+                post.likes_count++;
+            }
             _context.posts.Update(post);
-
             _context.SaveChanges();
+            return post.likes_count;
         }
 
-        public void Dislike(int post_id, string user_id)
+        public int Dislike(int post_id, string user_id)
         {
             //IMPLEMENT: Counter
             var post = _context.posts.Find(post_id);
+
+            bool alreadyDisliked = false;
             foreach (var like in _context.likes.Where(d => d.post_id == post.post_id))
             {
                 if (like.user_id == user_id)
@@ -142,17 +162,32 @@ namespace KloutAPI.Models
                     _context.likes.Remove(rlike);
                 }
             }
-            var dislike = new Dislike
+            foreach (var dislike in _context.dislikes.Where(d => d.post_id == post_id))
             {
-                user_id = user_id,
-                post_id = post_id
-            };
-            _context.dislikes.Add(dislike);
-
-            post.dislikes_count++;
+                if(dislike.user_id == user_id)
+                {
+                    post.dislikes_count--;
+                    Dislike rdis = new Dislike {
+                        dislike_id = dislike.dislike_id,
+                        user_id = dislike.user_id,
+                        post_id = dislike.post_id
+                    };
+                    _context.dislikes.Remove(rdis);
+                    alreadyDisliked = true;
+                }
+            }
+            if(!alreadyDisliked) {
+                var newDislike = new Dislike
+                {
+                    user_id = user_id,
+                    post_id = post_id
+                };
+                _context.dislikes.Add(newDislike);
+                post.dislikes_count++;
+            }
             _context.posts.Update(post);
-
             _context.SaveChanges();
+            return post.dislikes_count;
         }
 
         public IEnumerable<Post> Feed(string user_id)

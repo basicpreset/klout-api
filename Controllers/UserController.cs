@@ -16,7 +16,6 @@ namespace KloutAPI.Controllers
             _repo = userRepository;
         }
 
-        // 1. Get user
         [HttpGet("{user_id}")]
         public ActionResult<User> Get(string user_id)
         {
@@ -77,5 +76,28 @@ namespace KloutAPI.Controllers
             var following = _repo.Following(user_id: user_id);
             return following;
         }
+
+        // 9. Likes
+        [HttpGet("{user_id}/likes")]
+        public ActionResult<List<int>> Likes(string user_id)
+        {
+            return _repo.Likes(user_id);
+        }
+
+        // 10. Dislikes
+        [HttpGet("{user_id}/dislikes")]
+        public ActionResult<List<int>> Dislikes(string user_id)
+        {
+            return _repo.Dislikes(user_id);
+        }
+
+        // 11. All users [TEMPORARY SOLUTION FOR SEARCH LIST]
+        [HttpGet("search")]
+        public ActionResult<List<User>> All()
+        {
+            return _repo.Search();
+        }
+
+        
     }
 }

@@ -19,9 +19,14 @@ namespace KloutAPI.Models
         public int follower_count { get; set; }
         public int following_count { get; set; }
         public string profile_img_url { get; set; }
-        public string profile_cover_url { get; set; }
 
-        //[InverseProperty("User")]
-        //public virtual List<Post> posts { get; set; } = new List<Post>();
+        [ForeignKey("user_id")]
+        public virtual List<Post> posts { get; set; } = new List<Post>();
+        //[ForeignKey("user_id")]
+        [NotMapped]
+        public virtual List<int> likes { get; set; } = new List<int>();
+        //[ForeignKey("user_id")]
+        [NotMapped]
+        public virtual List<int> dislikes { get; set; } = new List<int>();
     }
 }

@@ -8,7 +8,9 @@ namespace KloutAPI.Models
     {
         [Key]
         public int dislike_id { get; set; }
+        //[ForeignKey("user_id")]
         public string user_id { get; set; }
+        //[ForeignKey("post_id")]
         public int post_id { get; set; }
     }
 }

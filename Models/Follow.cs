@@ -22,10 +22,10 @@ namespace KloutAPI.Models
         public string follower_id { get; set; }
         public string following_id { get; set; }
 
-        [ForeignKey("follower_id")]
-        public User follower_user { get; set; }
+        //[ForeignKey("follower_id")]
+        //public User follower_user { get; set; }
 
-        [ForeignKey("following_id")]
-        public User following_user { get; set; }
+        //[ForeignKey("following_id")]
+        //public User following_user { get; set; }
     }
 }
